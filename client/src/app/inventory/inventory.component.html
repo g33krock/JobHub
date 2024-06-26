@@ -1,0 +1,65 @@
+<h1>Inventory Management</h1>
+
+<!-- Form for adding a new item -->
+<form (ngSubmit)="addInventory()">
+  <div>
+    <label>Description:</label>
+    <input [(ngModel)]="newItem.description" name="description" required>
+  </div>
+  <div>
+    <label>Quantity:</label>
+    <input type="number" [(ngModel)]="newItem.quantity" name="quantity" required>
+  </div>
+  <div>
+    <label>Purchase Price:</label>
+    <input type="number" [(ngModel)]="newItem.purchase_price" name="purchase_price" required>
+  </div>
+  <div>
+    <label>Rental:</label>
+    <input type="checkbox" [(ngModel)]="newItem.rental" name="rental">
+  </div>
+  <div>
+    <label>Sale Price:</label>
+    <input type="number" [(ngModel)]="newItem.sale_price" name="sale_price" required>
+  </div>
+  <button type="submit">Add Item</button>
+</form>
+
+<!-- Form for updating a selected item -->
+<div *ngIf="selectedItem">
+  <h2>Edit Item</h2>
+  <form (ngSubmit)="updateInventory()">
+    <div>
+      <label>Description:</label>
+      <input [(ngModel)]="selectedItem!.description" name="description" required>
+    </div>
+    <div>
+      <label>Quantity:</label>
+      <input type="number" [(ngModel)]="selectedItem!.quantity" name="quantity" required>
+    </div>
+    <div>
+      <label>Purchase Price:</label>
+      <input type="number" [(ngModel)]="selectedItem!.purchase_price" name="purchase_price" required>
+    </div>
+    <div>
+      <label>Rental:</label>
+      <input type="checkbox" [(ngModel)]="selectedItem!.rental" name="rental">
+    </div>
+    <div>
+      <label>Sale Price:</label>
+      <input type="number" [(ngModel)]="selectedItem!.sale_price" name="sale_price" required>
+    </div>
+    <button type="submit">Update Item</button>
+    <button type="button" (click)="clearSelection()">Cancel</button>
+  </form>
+</div>
+
+<!-- List of inventory items -->
+<h2>Inventory List</h2>
+<ul>
+  <li *ngFor="let item of inventory">
+    {{ item.description }} - {{ item.quantity }} - {{ item.purchase_price }} - {{ item.rental }} - {{ item.sale_price }}
+    <button (click)="selectItem(item)">Edit</button>
+    <button (click)="deleteInventory(item.id)">Delete</button>
+  </li>
+</ul>
