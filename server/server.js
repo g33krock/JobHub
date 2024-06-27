@@ -6,6 +6,12 @@ const dotenv = require('dotenv');
 // Load environment variables from .env file
 dotenv.config();
 
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
+console.log('DB_NAME:', process.env.DB_NAME);
+console.log('PORT:', process.env.PORT);
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -29,6 +35,7 @@ db.connect(err => {
 app.get('/users', (req, res) => {
   db.query('SELECT * FROM users', (err, results) => {
     if (err) {
+      console.error('Error fetching users:', err);
       return res.status(500).send(err);
     }
     res.json(results);
@@ -38,16 +45,56 @@ app.get('/users', (req, res) => {
 // Add a new user
 app.post('/users', (req, res) => {
   const { first_name, last_name, email, phone, street_address, state, city, zip, vendor } = req.body;
-  if (!first_name || !last_name || !email || !vendor) {
-    return res.status(400).send('Required fields are missing');
+  if (!first_name || !last_name || !email || vendor === undefined) {
+    return res.status(400).send('All fields are required');
   }
 
-  const query = 'INSERT INTO user (first_name, last_name, email, phone, street_address, state, city, zip, vendor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const query = 'INSERT INTO users (first_name, last_name, email, phone, street_address, state, city, zip, vendor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
   db.query(query, [first_name, last_name, email, phone, street_address, state, city, zip, vendor], (err, result) => {
     if (err) {
+      console.error('Error adding user:', err);
       return res.status(500).send(err);
     }
     res.status(201).send({ id: result.insertId, first_name, last_name, email, phone, street_address, state, city, zip, vendor });
+  });
+});
+
+// Update a user
+app.put('/users/:id', (req, res) => {
+  const { id } = req.params;
+  const { first_name, last_name, email, phone, street_address, state, city, zip, vendor } = req.body;
+
+  if (!first_name || !last_name || !email || vendor === undefined) {
+    return res.status(400).send('All fields are required');
+  }
+
+  const query = 'UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, street_address = ?, state = ?, city = ?, zip = ?, vendor = ? WHERE id = ?';
+  db.query(query, [first_name, last_name, email, phone, street_address, state, city, zip, vendor, id], (err, result) => {
+    if (err) {
+      console.error('Error updating user:', err);
+      return res.status(500).send(err);
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).send('User not found');
+    }
+    res.send({ id, first_name, last_name, email, phone, street_address, state, city, zip, vendor });
+  });
+});
+
+// Delete a user
+app.delete('/users/:id', (req, res) => {
+  const { id } = req.params;
+
+  const query = 'DELETE FROM users WHERE id = ?';
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error('Error deleting user:', err);
+      return res.status(500).send(err);
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).send('User not found');
+    }
+    res.sendStatus(204);
   });
 });
 
@@ -55,6 +102,7 @@ app.post('/users', (req, res) => {
 app.get('/inventory', (req, res) => {
   db.query('SELECT * FROM inventory', (err, results) => {
     if (err) {
+      console.error('Error fetching inventory:', err);
       return res.status(500).send(err);
     }
     res.json(results);
@@ -71,6 +119,7 @@ app.post('/inventory', (req, res) => {
   const query = 'INSERT INTO inventory (description, quantity, purchase_price, rental, sale_price) VALUES (?, ?, ?, ?, ?)';
   db.query(query, [description, quantity, purchase_price, rental, sale_price], (err, result) => {
     if (err) {
+      console.error('Error adding inventory item:', err);
       return res.status(500).send(err);
     }
     res.status(201).send({ id: result.insertId, description, quantity, purchase_price, rental, sale_price });
@@ -88,6 +137,7 @@ app.put('/inventory/:id', (req, res) => {
   const query = 'UPDATE inventory SET description = ?, quantity = ?, purchase_price = ?, rental = ?, sale_price = ? WHERE id = ?';
   db.query(query, [description, quantity, purchase_price, rental, sale_price, id], (err, result) => {
     if (err) {
+      console.error('Error updating inventory item:', err);
       return res.status(500).send(err);
     }
     if (result.affectedRows === 0) {
@@ -103,6 +153,7 @@ app.delete('/inventory/:id', (req, res) => {
   const query = 'DELETE FROM inventory WHERE id = ?';
   db.query(query, [id], (err, result) => {
     if (err) {
+      console.error('Error deleting inventory item:', err);
       return res.status(500).send(err);
     }
     if (result.affectedRows === 0) {
