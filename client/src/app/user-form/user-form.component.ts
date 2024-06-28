@@ -1,19 +1,23 @@
-// user-form.component.ts
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service';
 import { User } from './user.model';
 import { Subscription } from 'rxjs';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ModalComponent],
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.scss']
 })
-export class UserFormComponent implements OnInit, OnDestroy {
+export class UserFormComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() showModal: boolean = false;
+  @Output() closeModal = new EventEmitter<void>();
+  @Output() refreshList = new EventEmitter<void>();
+
   first_name = '';
   last_name = '';
   email = '';
@@ -32,11 +36,32 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.subscription = this.userService.selectedUser$.subscribe(user => {
       if (user) {
         this.populateForm(user);
+        this.showModal = true; // Show modal when a user is selected
+        console.log('User selected:', user);
       } else {
         this.clearFormFields();
+        console.log('No user selected');
       }
     });
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedUser']) {
+      if (this.userService.selectedUserSubject.value) {
+        console.log('Selected User:', this.userService.selectedUserSubject.value);
+        this.populateForm(this.userService.selectedUserSubject.value);
+      } else {
+        console.log('No selected user');
+      }
+    }
+  }
+
+  onCloseModal(): void {
+    this.clearFormFields();
+    this.userService.clearSelectedUser();
+    console.log('Modal closed and user cleared');
+    this.closeModal.emit();
+  }  
 
   ngOnDestroy(): void {
     if (this.subscription) {
@@ -68,7 +93,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.vendor = false;
   }
 
-  onSubmit(): void {
+  submitForm(): void {
     const newUser: User = {
       first_name: this.first_name,
       last_name: this.last_name,
@@ -83,28 +108,19 @@ export class UserFormComponent implements OnInit, OnDestroy {
 
     if (this.userService.selectedUserSubject.value) {
       newUser.id = this.userService.selectedUserSubject.value.id;
-      this.userService.updateUser(newUser).subscribe(
-        response => {
-          console.log('User updated successfully', response);
-          this.clearFormFields();
-          this.userService.clearSelectedUser();  // Clear the selected user after updating
-          this.userService.loadUsers();
-        },
-        error => {
-          console.error('Error updating user', error);
-        }
-      );
+      this.userService.updateUser(newUser).subscribe(() => {
+        this.clearFormFields();
+        this.userService.clearSelectedUser();
+        this.refreshList.emit(); // Emit event to refresh list
+        this.closeModal.emit();
+      });
     } else {
-      this.userService.addUser(newUser).subscribe(
-        response => {
-          console.log('User added successfully', response);
-          this.clearFormFields();
-          this.userService.loadUsers();
-        },
-        error => {
-          console.error('Error adding user', error);
-        }
-      );
+      this.userService.addUser(newUser).subscribe(() => {
+        this.clearFormFields();
+        this.userService.clearSelectedUser();
+        this.refreshList.emit(); // Emit event to refresh list
+        this.closeModal.emit();
+      });
     }
   }
 }

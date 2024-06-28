@@ -1,17 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InventoryService } from '../inventory.service';
 import { InventoryItem } from './inventory-item.model';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ModalComponent],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss']
 })
-export class InventoryComponent implements OnInit {
+export class InventoryComponent implements OnInit, OnChanges {
+  @Input() showModal: boolean = false;
+  @Input() selectedItem: InventoryItem | null = null;
+  @Output() closeModal = new EventEmitter<void>();
+
   inventory: InventoryItem[] = [];
   newItem: InventoryItem = {
     description: '',
@@ -20,12 +25,17 @@ export class InventoryComponent implements OnInit {
     rental: false,
     sale_price: 0
   };
-  selectedItem: InventoryItem | null = null;
 
   constructor(private inventoryService: InventoryService) {}
 
   ngOnInit(): void {
     this.loadInventory();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedItem'] && this.selectedItem) {
+      this.populateForm(this.selectedItem);
+    }
   }
 
   loadInventory(): void {
@@ -37,13 +47,8 @@ export class InventoryComponent implements OnInit {
   addInventory(): void {
     this.inventoryService.addInventory(this.newItem).subscribe(() => {
       this.loadInventory();
-      this.newItem = {
-        description: '',
-        quantity: 0,
-        purchase_price: 0,
-        rental: false,
-        sale_price: 0
-      };
+      this.clearFormFields();
+      this.closeModal.emit();
     });
   }
 
@@ -52,6 +57,8 @@ export class InventoryComponent implements OnInit {
       this.inventoryService.updateInventory(this.selectedItem).subscribe(() => {
         this.loadInventory();
         this.selectedItem = null;
+        this.clearFormFields();
+        this.closeModal.emit();
       });
     }
   }
@@ -64,11 +71,17 @@ export class InventoryComponent implements OnInit {
     }
   }
 
-  selectItem(item: InventoryItem): void {
-    this.selectedItem = { ...item };
+  populateForm(item: InventoryItem): void {
+    this.newItem = { ...item };
   }
 
-  clearSelection(): void {
-    this.selectedItem = null;
+  clearFormFields(): void {
+    this.newItem = {
+      description: '',
+      quantity: 0,
+      purchase_price: 0,
+      rental: false,
+      sale_price: 0
+    };
   }
 }

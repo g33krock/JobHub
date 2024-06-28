@@ -1,0 +1,17 @@
+<div>
+  <h2>Inventory List</h2>
+  <button (click)="onAddItem()">Add Inventory</button>
+  <ul>
+    <li *ngFor="let item of inventory">
+      {{ item.description }} - {{ item.quantity }} - {{ item.purchase_price }}
+      <button (click)="onSelectItem(item)">Edit</button>
+      <button (click)="deleteItem(item.id!)">Delete</button>
+    </li>
+  </ul>
+  <app-inventory-form
+    [showModal]="showInventoryModal"
+    [selectedItem]="selectedInventoryItem"
+    (closeModal)="closeInventoryModal()"
+    (refreshList)="loadInventory()"
+  ></app-inventory-form>
+</div>

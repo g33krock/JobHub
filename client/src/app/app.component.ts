@@ -1,21 +1,62 @@
 import { Component } from '@angular/core';
-import { UserListComponent } from './user-list/user-list.component';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { UserService } from './user.service';
+import { InventoryService } from './inventory.service';
+import { User } from './user-form/user.model';
+import { InventoryItem } from './inventory/inventory-item.model';
 import { UserFormComponent } from './user-form/user-form.component';
-import { InventoryComponent } from "./inventory/inventory.component";
+import { InventoryFormComponent } from './inventory-form/inventory-form.component';
 
 @Component({
-    selector: 'app-root',
-    standalone: true,
-    template: `
-    <h1>User Management</h1>
-    <app-user-form></app-user-form>
-    <app-user-list></app-user-list>
-    <app-inventory></app-inventory>
-  `,
-    imports: [UserListComponent, UserFormComponent, InventoryComponent]
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    UserFormComponent,
+    InventoryFormComponent
+  ],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title(title: any) {
-    throw new Error('Method not implemented.');
+  showUserModal = false;
+  showInventoryModal = false;
+  selectedInventoryItem: InventoryItem | null = null;
+
+  constructor(public userService: UserService, public inventoryService: InventoryService) {}
+
+  openUserModal() {
+    this.showUserModal = true;
+    console.log('User modal state: open', this.showUserModal);
   }
+  
+  closeUserModal() {
+    this.showUserModal = false;
+    this.userService.clearSelectedUser();
+    console.log('User modal state: closed', this.showUserModal);
+  }
+  
+  openInventoryModal() {
+    this.showInventoryModal = true;
+    console.log('Inventory modal state: open', this.showInventoryModal);
+  }
+  
+  closeInventoryModal() {
+    this.showInventoryModal = false;
+    this.selectedInventoryItem = null;
+    console.log('Inventory modal state: closed', this.showInventoryModal);
+  }
+  
+  onSelectUser(user: User): void {
+    this.userService.selectUser(user);
+    this.openUserModal();
+  }
+  
+  onSelectInventoryItem(item: InventoryItem): void {
+    this.selectedInventoryItem = item;
+    this.openInventoryModal();
+  }
+  
 }

@@ -9,7 +9,7 @@ import { InventoryItem } from './inventory/inventory-item.model';
 export class InventoryService {
   private apiUrl = 'http://localhost:3000/inventory';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getInventory(): Observable<InventoryItem[]> {
     return this.http.get<InventoryItem[]>(this.apiUrl);
@@ -19,9 +19,8 @@ export class InventoryService {
     return this.http.post<InventoryItem>(this.apiUrl, item);
   }
 
-  updateInventory(item: InventoryItem): Observable<InventoryItem> {
-    console.log(item)
-    return this.http.put<InventoryItem>(`${this.apiUrl}/${item.id}`, item);
+  updateInventory(item: InventoryItem): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${item.id}`, item);
   }
 
   deleteInventory(id: number): Observable<void> {
