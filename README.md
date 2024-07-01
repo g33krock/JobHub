@@ -114,6 +114,7 @@ jobhub/
 ├── .env                 # Environment variables
 ├── README.md            # Project README file
 └── package.json         # Root dependencies
+```
 
 ## API Endpoints
 - Users
@@ -132,8 +133,8 @@ jobhub/
 
 - Transactions
 
-- **GET /transactions - Get all transactions
-- **POST /transactions - Create a new transaction
+- **GET /transactions - Get all transactions**
+- **POST /transactions - Create a new transaction**
 
 Contributing
 1. **Fork the repository.**
