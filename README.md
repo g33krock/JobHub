@@ -117,26 +117,27 @@ jobhub/
 ```
 
 ## API Endpoints
-- Users
+
+### Users
 
 - **GET /users - Get all users**
 - **POST /users - Create a new user**
 - **PUT /users/:id - Update an existing user**
 - **DELETE /users/:id - Delete a user**
 
-- Inventory
+### Inventory
 
 - **GET /inventory - Get all inventory items**
 - **POST /inventory - Create a new inventory item**
 - **PUT /inventory/:id - Update an existing inventory item**
 - **DELETE /inventory/:id - Delete an inventory item**
 
-- Transactions
+### Transactions
 
 - **GET /transactions - Get all transactions**
 - **POST /transactions - Create a new transaction**
 
-Contributing
+### Contributing
 1. **Fork the repository.**
 2. **Create a new branch: git checkout -b master.**
 3. **Make your changes and commit them: git commit -m 'Add some feature'.**
