@@ -163,6 +163,40 @@ app.delete('/inventory/:id', (req, res) => {
   });
 });
 
+// Get all transactions
+app.get('/transactions', (req, res) => {
+  const query = `
+    SELECT t.*, v.first_name AS vendor_name, c.first_name AS customer_name, i.description AS item_description
+    FROM transactions t
+    JOIN users v ON t.vendor_id = v.id
+    JOIN users c ON t.customer_id = c.id
+    JOIN inventory i ON t.item_id = i.id
+  `;
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    res.json(results);
+  });
+});
+
+// Create a new transaction
+app.post('/transactions', (req, res) => {
+  const { vendor_id, customer_id, items, total } = req.body;
+
+  const transactionDate = new Date();
+  const query = 'INSERT INTO transactions (vendor_id, customer_id, item_id, quantity, total, transaction_date) VALUES ?';
+  const values = items.map(item => [vendor_id, customer_id, item.item_id, item.quantity, total, transactionDate]);
+
+  db.query(query, [values], (err, result) => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    res.status(201).send(result);
+  });
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

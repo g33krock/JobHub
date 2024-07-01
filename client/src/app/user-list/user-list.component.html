@@ -1,12 +1,42 @@
 <div>
   <h2>User List</h2>
   <button (click)="onAddUser()">Add User</button>
-  <ul>
-    <li *ngFor="let user of users">
-      {{ user.first_name }} {{ user.last_name }} - {{ user.email }}
-      <button (click)="onSelectUser(user)">Edit</button>
-      <button (click)="deleteUser(user.id!)">Delete</button>
-    </li>
-  </ul>
-  <app-user-form [showModal]="showUserModal" (closeModal)="closeUserModal()" (refreshList)="loadUsers()"></app-user-form>
+  <table>
+    <thead>
+      <tr>
+        <th>Last Name</th>
+        <th>First Name</th>
+        <th>Vendor</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zip</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.last_name }}</td>
+        <td>{{ user.first_name }}</td>
+        <td>{{ userType(user.vendor) }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.street_address }}</td>
+        <td>{{ user.city }}</td>
+        <td>{{ user.state }}</td>
+        <td>{{ user.zip }}</td>
+        <td>
+          <button (click)="onSelectUser(user)">Edit</button>
+          <button (click)="deleteUser(user.id!)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <app-user-form
+    [showModal]="showUserModal"
+    (closeModal)="closeUserModal()"
+    (refreshList)="loadUsers()"
+  ></app-user-form>
 </div>

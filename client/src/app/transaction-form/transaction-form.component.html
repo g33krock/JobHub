@@ -1,0 +1,44 @@
+<app-modal
+  [title]="'New Transaction'"
+  [showModal]="showModal"
+  (closeModal)="onCloseModal()"
+  (submit)="submitForm()"
+>
+  <div class="form-grid">
+    <div class="form-group">
+      <label for="vendor">Vendor:</label>
+      <select id="vendor" [(ngModel)]="selectedVendor" name="vendor" required>
+        <option *ngFor="let vendor of vendors" [ngValue]="vendor">{{ vendor.first_name }} {{ vendor.last_name }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="customer">Customer:</label>
+      <select id="customer" [(ngModel)]="selectedCustomer" name="customer" required>
+        <option *ngFor="let customer of customers" [ngValue]="customer">{{ customer.first_name }} {{ customer.last_name }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button type="button" (click)="addItem()">Add Item</button>
+    </div>
+    <div class="form-group">
+      <label for="item">Item:</label>
+      <select id="item" [(ngModel)]="selectedItem" name="item">
+        <option *ngFor="let item of items" [ngValue]="item">{{ item.description }} - {{ item.sale_price | currency }}</option>
+      </select>
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" [(ngModel)]="quantity" name="quantity" min="1" [max]="selectedItem?.quantity || 1" />
+    </div>
+  </div>
+  <div>
+    <h3>Selected Items</h3>
+    <ul>
+      <li *ngFor="let item of selectedItems; let i = index">
+        {{ item.description }} - {{ item.quantity }} x {{ item.sale_price | currency }} = {{ (item.sale_price * item.quantity) | currency }}
+        <button type="button" (click)="removeItem(i)">Remove</button>
+      </li>
+    </ul>
+    <div>
+      <strong>Total: {{ total | currency }}</strong>
+    </div>
+  </div>
+</app-modal>

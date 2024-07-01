@@ -1,6 +1,6 @@
-import { Component, OnInit, OnChanges, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, Output, EventEmitter, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { InventoryService } from '../inventory.service';
 import { InventoryItem } from '../inventory/inventory-item.model';
 import { ModalComponent } from '../modal/modal.component';
@@ -18,6 +18,8 @@ export class InventoryFormComponent implements OnInit, OnChanges {
   @Output() closeModal = new EventEmitter<void>();
   @Output() refreshList = new EventEmitter<void>();
 
+  @ViewChild('inventoryForm') inventoryForm!: NgForm;
+
   description = '';
   quantity = 0;
   purchase_price = 0;
@@ -27,7 +29,6 @@ export class InventoryFormComponent implements OnInit, OnChanges {
   constructor(public inventoryService: InventoryService) {}
 
   ngOnInit(): void {
-    // Initial population if selectedItem is already set when component initializes
     if (this.selectedItem) {
       this.populateForm(this.selectedItem);
     }
@@ -61,27 +62,29 @@ export class InventoryFormComponent implements OnInit, OnChanges {
   }
 
   submitForm(): void {
-    const newItem: InventoryItem = {
-      description: this.description,
-      quantity: this.quantity,
-      purchase_price: this.purchase_price,
-      rental: this.rental,
-      sale_price: this.sale_price
-    };
+    if (this.inventoryForm.form.valid) {
+      const newItem: InventoryItem = {
+        description: this.description,
+        quantity: this.quantity,
+        purchase_price: this.purchase_price,
+        rental: this.rental,
+        sale_price: this.sale_price
+      };
 
-    if (this.selectedItem) {
-      newItem.id = this.selectedItem.id;
-      this.inventoryService.updateInventory(newItem).subscribe(() => {
-        this.clearFormFields();
-        this.refreshList.emit(); // Emit event to refresh list
-        this.closeModal.emit();
-      });
-    } else {
-      this.inventoryService.addInventory(newItem).subscribe(() => {
-        this.clearFormFields();
-        this.refreshList.emit(); // Emit event to refresh list
-        this.closeModal.emit();
-      });
+      if (this.selectedItem) {
+        newItem.id = this.selectedItem.id;
+        this.inventoryService.updateInventory(newItem).subscribe(() => {
+          this.clearFormFields();
+          this.refreshList.emit();
+          this.closeModal.emit();
+        });
+      } else {
+        this.inventoryService.addInventory(newItem).subscribe(() => {
+          this.clearFormFields();
+          this.refreshList.emit();
+          this.closeModal.emit();
+        });
+      }
     }
   }
 }

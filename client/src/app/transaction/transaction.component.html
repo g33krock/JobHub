@@ -1,0 +1,28 @@
+<div>
+    <h2>Transactions</h2>
+    <button (click)="openModal()">New Transaction</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Vendor</th>
+          <th>Customer</th>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Total</th>
+          <th>Date/Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transaction of transactions">
+          <td>{{ transaction.vendor_name }}</td>
+          <td>{{ transaction.customer_name }}</td>
+          <td>{{ transaction.item_description }}</td>
+          <td>{{ transaction.quantity }}</td>
+          <td>{{ transaction.total | currency }}</td>
+          <td>{{ transaction.transaction_date }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <app-transaction-form [showModal]="showModal" (closeModal)="closeModal()"></app-transaction-form>
+  </div>
+  

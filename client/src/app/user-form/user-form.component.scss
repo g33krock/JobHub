@@ -1,0 +1,66 @@
+/* user-form.component.scss */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    grid-gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group:nth-child(1) {
+    grid-column: span 1;
+    align-items: flex-start; /* Left-justify the Vendor checkbox */
+  }
+  
+  .form-group:nth-child(2) {
+    grid-column: span 1;
+  }
+  
+  .form-group:nth-child(3),
+  .form-group:nth-child(4) {
+    grid-column: span 1;
+  }
+  
+  .form-group:nth-child(5),
+  .form-group:nth-child(6) {
+    grid-column: span 1;
+  }
+  
+  .form-group:nth-child(7),
+  .form-group:nth-child(8) {
+    grid-column: span 1;
+  }
+  
+  .form-group:nth-child(9),
+  .form-group:nth-child(10) {
+    grid-column: span 1;
+  }
+  
+  .form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group input[type="email"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .form-group input[type="checkbox"] {
+    margin-top: 10px;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+  

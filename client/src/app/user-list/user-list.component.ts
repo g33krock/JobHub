@@ -22,6 +22,15 @@ export class UserListComponent implements OnInit {
     this.loadUsers();
   }
 
+  userType(vendor: boolean) {
+    if (vendor){
+      return 'vendor'
+    }
+    else {
+      return 'customer'
+    }
+  }
+
   loadUsers(): void {
     this.userService.getUsers().subscribe((data: User[]) => {
       this.users = data;
