@@ -23,9 +23,10 @@ export class TransactionComponent implements OnInit {
 
   loadTransactions(): void {
     this.transactionService.getTransactions().subscribe((data) => {
-      this.transactions = data;
+      this.transactions = data.sort((a, b) => new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime());
     });
   }
+  
 
   openModal(): void {
     this.showModal = true;
