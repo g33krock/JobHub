@@ -100,9 +100,17 @@ app.delete('/users/:id', (req, res) => {
 
 // Get all inventory items
 app.get('/inventory', (req, res) => {
-  db.query('SELECT * FROM inventory', (err, results) => {
+  const query = 
+  `SELECT 
+      i.*, 
+      IFNULL(SUM(t.quantity), 0) AS sold_quantity, 
+      (i.quantity - IFNULL(SUM(t.quantity), 0)) AS available_quantity 
+    FROM inventory i
+    LEFT JOIN transactions t ON i.id = t.item_id
+    GROUP BY i.id;`;
+
+  db.query(query, (err, results) => {
     if (err) {
-      console.error('Error fetching inventory:', err);
       return res.status(500).send(err);
     }
     res.json(results);

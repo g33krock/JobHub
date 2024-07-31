@@ -1,6 +1,16 @@
 <div>
-    <h2>Transactions</h2>
-    <button (click)="openModal()">New Transaction</button>
+  <h2>Transactions</h2>
+  <button (click)="openModal()">New Transaction</button>
+  
+  <div>
+    <label for="itemsPerPage">Show</label>
+    <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange(itemsPerPage)">
+      <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+    </select>
+    <label for="itemsPerPage">entries</label>
+  </div>
+
+  <div style="overflow-x: auto;">
     <table>
       <thead>
         <tr>
@@ -9,20 +19,29 @@
           <th>Item</th>
           <th>Quantity</th>
           <th>Total</th>
-          <th>Date/Time</th>
+          <th>Date</th>
+          <th>Time</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let transaction of transactions">
+        <tr *ngFor="let transaction of filteredTransactions">
           <td>{{ transaction.vendor_name }}</td>
           <td>{{ transaction.customer_name }}</td>
           <td>{{ transaction.item_description }}</td>
-          <td>{{ transaction.quantity }}</td>
+          <td class="quantity">{{ transaction.quantity }}</td>
           <td>{{ transaction.total | currency }}</td>
-          <td>{{ transaction.transaction_date }}</td>
+          <td>{{ transaction.formattedDate }}</td>
+          <td>{{ transaction.formattedTime }}</td>
         </tr>
       </tbody>
     </table>
-    <app-transaction-form [showModal]="showModal" (closeModal)="closeModal()"></app-transaction-form>
   </div>
-  
+
+  <div>
+    <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+    <span>Page {{ currentPage }}</span>
+    <button (click)="onPageChange(currentPage + 1)" [disabled]="(currentPage * itemsPerPage) >= transactions.length">Next</button>
+  </div>
+
+  <app-transaction-form [showModal]="showModal" (closeModal)="closeModal()"></app-transaction-form>
+</div>

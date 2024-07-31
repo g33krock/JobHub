@@ -34,7 +34,6 @@ export class InventoryListComponent implements OnInit {
     console.log('Inventory item selected:', item);
     this.showInventoryModal = true;
   }
-  
 
   onAddItem(): void {
     this.selectedInventoryItem = null;
