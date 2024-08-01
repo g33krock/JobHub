@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../transaction.service';
 import { TransactionFormComponent } from '../transaction-form/transaction-form.component';
 
 @Component({
   selector: 'app-transaction',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule, TransactionFormComponent], // Add FormsModule here
+  imports: [CommonModule, HttpClientModule, FormsModule, TransactionFormComponent],
   templateUrl: './transaction.component.html',
   styleUrls: ['./transaction.component.scss']
 })
@@ -45,9 +45,7 @@ export class TransactionComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    const utcDate = new Date(dateString);
-    const MST_OFFSET = -7; // MST is UTC-7
-    const mstDate = new Date(utcDate.getTime() + MST_OFFSET * 60 * 60 * 1000);
+    const mstDate = new Date(dateString);
 
     const month = mstDate.getMonth() + 1;
     const day = mstDate.getDate();
@@ -57,15 +55,13 @@ export class TransactionComponent implements OnInit {
   }
 
   formatTime(dateString: string): string {
-    const utcDate = new Date(dateString);
-    const MST_OFFSET = -7; // MST is UTC-7
-    const mstDate = new Date(utcDate.getTime() + MST_OFFSET * 60 * 60 * 1000);
+    const mstDate = new Date(dateString);
 
     let hours = mstDate.getHours();
     const minutes = mstDate.getMinutes();
     const isPM = hours >= 12;
 
-    hours = hours % 12 || 12; // Convert 0 hour to 12 for AM/PM format
+    hours = hours % 12 || 12;
     const formattedMinutes = minutes.toString().padStart(2, "0");
     const ampm = isPM ? "pm" : "am";
 
@@ -88,7 +84,7 @@ export class TransactionComponent implements OnInit {
 
   onItemsPerPageChange(newItemsPerPage: number): void {
     this.itemsPerPage = newItemsPerPage;
-    this.currentPage = 1; // Reset to first page
+    this.currentPage = 1;
     this.updateFilteredTransactions();
   }
 }
